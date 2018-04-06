@@ -2,7 +2,7 @@ object frmMain: TfrmMain
   Left = 0
   Top = 0
   Caption = 'Change version info'
-  ClientHeight = 342
+  ClientHeight = 437
   ClientWidth = 369
   Color = clBtnFace
   Constraints.MinHeight = 380
@@ -17,7 +17,7 @@ object frmMain: TfrmMain
   OnCreate = FormCreate
   DesignSize = (
     369
-    342)
+    437)
   PixelsPerInch = 96
   TextHeight = 13
   object lblProjectCount: TLabel
@@ -34,7 +34,7 @@ object frmMain: TfrmMain
     Left = 8
     Top = 39
     Width = 353
-    Height = 186
+    Height = 242
     Anchors = [akLeft, akTop, akRight, akBottom]
     Columns = <
       item
@@ -71,29 +71,34 @@ object frmMain: TfrmMain
   end
   object btnExecute: TButton
     Left = 8
-    Top = 309
+    Top = 404
     Width = 97
     Height = 25
     Action = actnExecute
     Anchors = [akLeft, akBottom]
     TabOrder = 4
+    ExplicitTop = 309
   end
   object ProgressBar1: TProgressBar
     Left = 111
-    Top = 314
+    Top = 409
     Width = 250
     Height = 17
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 5
+    ExplicitTop = 314
   end
   object gbVersionInfo: TGroupBox
     Left = 8
-    Top = 231
+    Top = 287
     Width = 353
-    Height = 72
+    Height = 111
     Anchors = [akLeft, akRight, akBottom]
     Caption = 'Version information'
     TabOrder = 3
+    DesignSize = (
+      353
+      111)
     object cbSetVersionBase: TCheckBox
       Left = 8
       Top = 18
@@ -144,6 +149,23 @@ object frmMain: TfrmMain
       AutoSize = False
       TabOrder = 2
       OnChange = edtVerBaseChange
+    end
+    object cbSetCopyright: TCheckBox
+      Left = 8
+      Top = 72
+      Width = 97
+      Height = 17
+      Caption = 'Set copyright'
+      TabOrder = 6
+    end
+    object edtCopyright: TEdit
+      Left = 111
+      Top = 68
+      Width = 234
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      TabOrder = 7
+      OnChange = edtCopyrightChange
     end
   end
   object ActionList1: TActionList

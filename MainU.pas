@@ -10,10 +10,11 @@ uses
   CAVerInfo;
 
 type
-  TVersionUpdateFlags = (vuBase, vuRelease, vuIncBuild);
+  TVersionUpdateFlags = (vuBase, vuRelease, vuIncBuild, vuSetCopyright);
 
   TVersionUpdateInfo = record
     Version: TVersion;
+    Copyright: string;
     Flags: set of TVersionUpdateFlags;
   end;
 
@@ -40,11 +41,14 @@ type
     lvProjects: TListView;
     ProgressBar1: TProgressBar;
     XMLDocument1: TXMLDocument;
+    cbSetCopyright: TCheckBox;
+    edtCopyright: TEdit;
     procedure actnAddProjectsAccept(Sender: TObject);
     procedure actnExecuteExecute(Sender: TObject);
     procedure actnExecuteUpdate(Sender: TObject);
     procedure actnRemoveProjectsExecute(Sender: TObject);
     procedure actnRemoveProjectsUpdate(Sender: TObject);
+    procedure edtCopyrightChange(Sender: TObject);
     procedure edtVerBaseChange(Sender: TObject);
     procedure edtVerReleaseChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -71,6 +75,7 @@ type
         TVersionUpdateInfo): TProcessResult;
     procedure ProjectCountUpdated;
   protected
+    function CreateVerInfoKeyList(aNode: IXMLNode): TStrings;
     procedure ListItemsDeleteItem(Sender: TJvCustomAppStorage; const Path: string;
         const List: TObject; const First, Last: Integer; const ItemName: string);
     procedure ListItemsReadItem(Sender: TJvCustomAppStorage; const Path: string;
@@ -162,6 +167,26 @@ begin
   if FileExists(aFilename) and
      (lvProjects.FindCaption(0, aFilename, False, True, False) = nil) then
     lvProjects.Items.Add.Caption := aFilename;
+end;
+
+function TfrmMain.CreateVerInfoKeyList(aNode: IXMLNode): TStrings;
+begin
+  Result := TStringList.Create;
+  try
+    Result.StrictDelimiter := True;
+    Result.Delimiter := ';';
+    if Assigned(aNode) then
+      Result.DelimitedText := aNode.Text;
+  except
+    Result.Free;
+    raise;
+  end;
+end;
+
+procedure TfrmMain.edtCopyrightChange(Sender: TObject);
+begin
+  if FUpdatingVersionControls then Exit;
+  cbSetCopyright.Checked := True;
 end;
 
 procedure TfrmMain.edtVerBaseChange(Sender: TObject);
@@ -263,6 +288,14 @@ begin
   begin
     Include(Result.Flags, vuIncBuild);
   end;
+  // Copyright
+  if cbSetCopyright.Checked then
+  begin
+    Include(Result.Flags, vuSetCopyright);
+    Result.Copyright := edtCopyright.Text;
+  end;
+
+
 
   if Result.Flags = [] then
     raise Exception.Create('No version option set');
@@ -343,7 +376,19 @@ procedure TfrmMain.lvProjectsChange(Sender: TObject; Item: TListItem; Change:
 var
   _BaseConfigNode, _CurSubNode: IXMLNode;
 
-  procedure UpdateEditValue(aEdit: TCANumEdit; aNode: IXMLNode);
+  function GetVerInfoKey(const aKeyName: string): string;
+  var
+    _VerKeys: TStrings;
+  begin
+    _VerKeys := CreateVerInfoKeyList(_BaseConfigNode.ChildNodes['VerInfo_Keys']);
+    try
+      Result := _VerKeys.Values[aKeyName];
+    finally
+      _VerKeys.Free;
+    end;
+  end;
+
+  procedure UpdateEditValue(aEdit: TCustomEdit; aNode: IXMLNode);
   begin
     if Assigned(aNode) and (aNode.Text <> '') then
       aEdit.Text := aNode.Text;
@@ -357,6 +402,7 @@ begin
     UpdateEditValue(edtVerMain, _BaseConfigNode.ChildNodes.FindNode('VerInfo_MajorVer'));
     UpdateEditValue(edtVerSub, _BaseConfigNode.ChildNodes.FindNode('VerInfo_MinorVer'));
     UpdateEditValue(edtVerRelease, _BaseConfigNode.ChildNodes.FindNode('VerInfo_Release'));
+    edtCopyright.Text := GetVerInfoKey('LegalCopyright');
   finally
     FUpdatingVersionControls := False;
     XMLDocument1.Active := False; // Close
@@ -437,11 +483,10 @@ begin
     Exit(prError);
 
   try
-    _VerKeys := TStringList.Create;
+    _VerKeys := CreateVerInfoKeyList(_BaseConfigNode.ChildNodes['VerInfo_Keys']);
     try
-      _VerKeys.StrictDelimiter := True;
-      _VerKeys.Delimiter := ';';
-      _VerKeys.DelimitedText := _BaseConfigNode.ChildNodes['VerInfo_Keys'].Text;
+      // Version number checks
+
       _ver := StringToVersion(_VerKeys.Values['FileVersion']);
 
       if vuBase in aVerUpdatInfo.Flags then
@@ -474,10 +519,20 @@ begin
         _VerKeys.Values['FileVersion'] := VersionToString(_ver);
         if vuBase in aVerUpdatInfo.Flags then
           _VerKeys.Values['ProductVersion'] := Format('%d.%d', [_ver.Main, _ver.Sub]);
-
-        _BaseConfigNode.ChildNodes['VerInfo_Keys'].Text := _VerKeys.DelimitedText;
       end;
 
+      // Copyright update?
+
+      if (vuSetCopyright in aVerUpdatInfo.Flags) and
+         (_VerKeys.Values['LegalCopyright'] <> aVerUpdatInfo.Copyright) then
+      begin
+        _VerKeys.Values['LegalCopyright'] := aVerUpdatInfo.Copyright;
+        Result := prEdited;
+      end;
+
+      // Update version info key (when data has changed)
+      if Result = prEdited then
+        _BaseConfigNode.ChildNodes['VerInfo_Keys'].Text := _VerKeys.DelimitedText;
     finally
       _VerKeys.Free;
     end;
