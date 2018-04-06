@@ -4,7 +4,7 @@ Starting with Delphi XE the project contains different version infomation settin
 
 When you have multible projects within an product suite, it's al lot of work to change the majro/minor version number of the different project files thru the IDE.
 
-This tool will allow you to set different versioninformaiton properties multiple project files at once:
+This tool will allow you to set different versioninformation properties for multiple project files at once:
 - Major/minor version number
 - Release version number
 - Increase build number
