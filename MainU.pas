@@ -43,11 +43,13 @@ type
     XMLDocument1: TXMLDocument;
     cbSetCopyright: TCheckBox;
     edtCopyright: TEdit;
+    cbSelectedOnly: TCheckBox;
     procedure actnAddProjectsAccept(Sender: TObject);
     procedure actnExecuteExecute(Sender: TObject);
     procedure actnExecuteUpdate(Sender: TObject);
     procedure actnRemoveProjectsExecute(Sender: TObject);
     procedure actnRemoveProjectsUpdate(Sender: TObject);
+    procedure cbSelectedOnlyClick(Sender: TObject);
     procedure edtCopyrightChange(Sender: TObject);
     procedure edtVerBaseChange(Sender: TObject);
     procedure edtVerReleaseChange(Sender: TObject);
@@ -105,17 +107,20 @@ end;
 
 procedure TfrmMain.actnExecuteExecute(Sender: TObject);
 var
+  _Info: TVersionUpdateInfo;
   I: Integer;
 begin
+  _Info := GetVerUpdateInfo;
   ProgressBar1.Position := 0;
   ProgressBar1.Max := lvProjects.Items.Count;
   for I := 0 to lvProjects.Items.Count - 1 do
   begin
     lvProjects.Items[I].SubItems.Clear;
-    case ProcessProject(lvProjects.Items[I].Caption, GetVerUpdateInfo) of
-      prEdited: lvProjects.Items[I].SubItems.Add('*');
-      prError : lvProjects.Items[I].SubItems.Add('!');
-    end;
+    if (not lvProjects.Checkboxes) or lvProjects.Items[I].Checked then
+      case ProcessProject(lvProjects.Items[I].Caption, _Info) of
+        prEdited: lvProjects.Items[I].SubItems.Add('*');
+        prError : lvProjects.Items[I].SubItems.Add('!');
+      end;
     ProgressBar1.StepBy(1);
   end;
   lvProjects.Invalidate;
@@ -167,6 +172,11 @@ begin
   if FileExists(aFilename) and
      (lvProjects.FindCaption(0, aFilename, False, True, False) = nil) then
     lvProjects.Items.Add.Caption := aFilename;
+end;
+
+procedure TfrmMain.cbSelectedOnlyClick(Sender: TObject);
+begin
+  lvProjects.Checkboxes := (Sender as TCheckBox).Checked;
 end;
 
 function TfrmMain.CreateVerInfoKeyList(aNode: IXMLNode): TStrings;
@@ -472,7 +482,6 @@ function TfrmMain.ProcessProject(const aFilename: string; const aVerUpdatInfo:
   end;
 
 var
-  I: Integer;
   _BaseConfigNode, _CurSubNode: IXMLNode;
   _VerKeys: TStrings;
   _ver: TVersion;

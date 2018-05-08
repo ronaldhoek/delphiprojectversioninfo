@@ -2,7 +2,7 @@ object frmMain: TfrmMain
   Left = 0
   Top = 0
   Caption = 'Change version info'
-  ClientHeight = 437
+  ClientHeight = 430
   ClientWidth = 369
   Color = clBtnFace
   Constraints.MinHeight = 380
@@ -17,7 +17,7 @@ object frmMain: TfrmMain
   OnCreate = FormCreate
   DesignSize = (
     369
-    437)
+    430)
   PixelsPerInch = 96
   TextHeight = 13
   object lblProjectCount: TLabel
@@ -34,7 +34,7 @@ object frmMain: TfrmMain
     Left = 8
     Top = 39
     Width = 353
-    Height = 242
+    Height = 235
     Anchors = [akLeft, akTop, akRight, akBottom]
     Columns = <
       item
@@ -52,6 +52,7 @@ object frmMain: TfrmMain
     ViewStyle = vsReport
     OnChange = lvProjectsChange
     OnCustomDrawItem = lvProjectsCustomDrawItem
+    ExplicitHeight = 242
   end
   object btnAddProjects: TButton
     Left = 8
@@ -71,34 +72,34 @@ object frmMain: TfrmMain
   end
   object btnExecute: TButton
     Left = 8
-    Top = 404
+    Top = 397
     Width = 97
     Height = 25
     Action = actnExecute
     Anchors = [akLeft, akBottom]
     TabOrder = 4
-    ExplicitTop = 309
+    ExplicitTop = 404
   end
   object ProgressBar1: TProgressBar
     Left = 111
-    Top = 409
+    Top = 402
     Width = 250
     Height = 17
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 5
-    ExplicitTop = 314
+    ExplicitTop = 409
   end
   object gbVersionInfo: TGroupBox
     Left = 8
-    Top = 287
+    Top = 270
     Width = 353
-    Height = 111
+    Height = 121
     Anchors = [akLeft, akRight, akBottom]
     Caption = 'Version information'
     TabOrder = 3
     DesignSize = (
       353
-      111)
+      121)
     object cbSetVersionBase: TCheckBox
       Left = 8
       Top = 18
@@ -118,7 +119,7 @@ object frmMain: TfrmMain
     end
     object cbSetVersionRelease: TCheckBox
       Left = 8
-      Top = 45
+      Top = 44
       Width = 97
       Height = 17
       Caption = 'Set release'
@@ -126,7 +127,7 @@ object frmMain: TfrmMain
     end
     object edtVerRelease: TCANumEdit
       Left = 111
-      Top = 43
+      Top = 42
       Width = 42
       Height = 21
       AutoSize = False
@@ -135,7 +136,7 @@ object frmMain: TfrmMain
     end
     object cbIncVersionBuild: TCheckBox
       Left = 159
-      Top = 45
+      Top = 44
       Width = 97
       Height = 17
       Caption = 'Increase build'
@@ -152,7 +153,7 @@ object frmMain: TfrmMain
     end
     object cbSetCopyright: TCheckBox
       Left = 8
-      Top = 72
+      Top = 70
       Width = 97
       Height = 17
       Caption = 'Set copyright'
@@ -166,6 +167,15 @@ object frmMain: TfrmMain
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 7
       OnChange = edtCopyrightChange
+    end
+    object cbSelectedOnly: TCheckBox
+      Left = 8
+      Top = 96
+      Width = 169
+      Height = 17
+      Caption = 'Apply only to selected projects'
+      TabOrder = 8
+      OnClick = cbSelectedOnlyClick
     end
   end
   object ActionList1: TActionList
