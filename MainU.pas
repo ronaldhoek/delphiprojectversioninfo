@@ -206,9 +206,21 @@ begin
 end;
 
 procedure TfrmMain.edtVerReleaseChange(Sender: TObject);
+var
+  edt: TCANumEdit;
 begin
   if FUpdatingVersionControls then Exit;
   cbSetVersionRelease.Checked := True;
+
+  FUpdatingVersionControls := True;
+  try
+    edt := (Sender as TCANumEdit);
+    edt.ZeroEmpty := edt.Text <> '0';
+    if not edt.ZeroEmpty then
+      edt.Text := '0';
+  finally
+    FUpdatingVersionControls := False;
+  end;
 end;
 
 procedure TfrmMain.FormatProject(const aFilename: string);
@@ -508,7 +520,17 @@ begin
 
       if vuRelease in aVerUpdatInfo.Flags then
       begin
-        UpdateNodeValue(_BaseConfigNode.ChildNodes['VerInfo_Release'], aVerUpdatInfo.Version.Release);
+        if aVerUpdatInfo.Version.Release = 0 then
+        begin
+          _CurSubNode := _BaseConfigNode.ChildNodes.FindNode('VerInfo_Release');
+          if Assigned(_CurSubNode) then
+          begin
+            _BaseConfigNode.ChildNodes.Remove(_CurSubNode);
+            Result := prEdited;
+          end;
+        end else
+          UpdateNodeValue(_BaseConfigNode.ChildNodes['VerInfo_Release'], aVerUpdatInfo.Version.Release);
+
         _ver.Release := aVerUpdatInfo.Version.Release;
       end;
 

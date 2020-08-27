@@ -47,10 +47,10 @@
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
 			<VerInfo_Build>4</VerInfo_Build>
-			<VerInfo_MinorVer>1</VerInfo_MinorVer>
+			<VerInfo_MinorVer>2</VerInfo_MinorVer>
 			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
 			<Manifest_File>None</Manifest_File>
-			<VerInfo_Keys>CompanyName=;FileDescription=Delphi project versioninfo tool;FileVersion=1.1.0.4;InternalName=XE2dprojVerTool;LegalCopyright=;LegalTrademarks=;OriginalFilename=XE2dprojVerTool.exe;ProductName=Delphi project versioninfo tool;ProductVersion=1.1;Comments=</VerInfo_Keys>
+			<VerInfo_Keys>CompanyName=;FileDescription=Delphi project versioninfo tool;FileVersion=1.2.0.4;InternalName=XE2dprojVerTool;LegalCopyright=;LegalTrademarks=;OriginalFilename=XE2dprojVerTool.exe;ProductName=Delphi project versioninfo tool;ProductVersion=1.2;Comments=</VerInfo_Keys>
 			<VerInfo_Locale>1043</VerInfo_Locale>
 			<DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
 			<Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
